@@ -37,12 +37,36 @@ where
 For our example, lets use b = 1 and w = 2.
 Gaussian noise added using `randn()` 
 
+
+Initial Loss:
+```
+Initial loss: 2.7422
+
+when 
+random seed is set to 42
+b=[0.49671415] and w=[-0.1382643]
+```
+
+
+Mesh Grid Matrix:
+```
+[[-2.   -1.94 -1.88 ...  3.88  3.94  4.  ]
+ [-2.   -1.94 -1.88 ...  3.88  3.94  4.  ]
+ [-2.   -1.94 -1.88 ...  3.88  3.94  4.  ]
+ ...
+ [-2.   -1.94 -1.88 ...  3.88  3.94  4.  ]
+ [-2.   -1.94 -1.88 ...  3.88  3.94  4.  ]
+ [-2.   -1.94 -1.88 ...  3.88  3.94  4.  ]]
+```
+
+
+
 - Training Data plot
 
-![training](regression-gradient\images\training_data.png)
+![](regression-gradient\images\training_data.png)
 
 - Validation Data plot
   
-![validation](regression-gradient\images\validation.png)
+![](regression-gradient\images\validation.png)
 
 

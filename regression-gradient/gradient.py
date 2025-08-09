@@ -30,8 +30,8 @@ train_idx = idx[:int(N * 0.8)] #train 80%
 val_idx = idx[int(N * 0.8):] #validation 20%
 
 
-x_train = x[train_idx], y[train_idx]
-x_val = x[val_idx], y[val_idx]
+x_train, y_train = x[train_idx], y[train_idx]
+x_val, y_val = x[val_idx], y[val_idx]
 
 # x_train[0] = training features
 # x_train[1] = training labels
@@ -44,6 +44,7 @@ np.random.seed(42)  # For reproducibility
 b = np.random.randn(1)
 w = np.random.randn(1)
 yhat = b + w * x_train[0]  # yhat = b + w * x
+print(yhat.shape)
 
 ## Loss Calculation
 # loss is generated using mean squared error (MSE).
@@ -54,8 +55,8 @@ print(f"Initial loss: {loss:.4f}")
 
 ## Lets do the same for more values of b and w
 # evenly spaced, 3 units below, 3 units above, 80 number of points
-b_range = np.linspace(true_b - 3, true_b + 3, 80)
-w_range = np.linspace(true_w - 3, true_w + 3, 80)
+b_range = np.linspace(true_b - 3, true_b + 3, 101)
+w_range = np.linspace(true_w - 3, true_w + 3, 101)
 #meshgrid is a handy function that generates a grid of b and w, so basically it creates an matrix.
 
 bs, ws = np.meshgrid(b_range, w_range)
@@ -66,7 +67,8 @@ print(bs.shape, ws.shape)
 
 dummy_x = x_train[0]
 print("dummy_x shape:", np.shape(dummy_x))
-dummy_yhat = bs + ws * dummy_x
+print(dummy_x)
+# dummy_yhat = bs + (ws * dummy_x)
 
 # dummy_yhat.shape
 # skipping for loop to do this and use np.apply.along_axis instead.

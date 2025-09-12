@@ -1,3 +1,14 @@
+# Python virtual environments
+venv/
+.venv/
+ENV/
+env/
+rag-project/Lib/
+rag-project/Scripts/
+rag-project/Include/
+rag-project/share/
+rag-project/pyvenv.cfg
+rag-project/Lib/site-packages/
 python-gemini/venv
 # Ignore Python virtual environments
 venv/

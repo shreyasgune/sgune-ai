@@ -1,0 +1,8 @@
+python-docx
+PyMuPDF
+sentence-transformers
+faiss-cpu
+ollama
+langchain
+torch
+faiss-gpu

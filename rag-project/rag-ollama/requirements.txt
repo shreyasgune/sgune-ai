@@ -5,4 +5,5 @@ faiss-cpu
 ollama
 langchain
 torch
+gradio
 # faiss-gpu

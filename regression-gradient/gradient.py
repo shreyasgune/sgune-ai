@@ -6,25 +6,7 @@ from sklearn.preprocessing import StandardScaler
 import matplotlib.pyplot as plt
 from mpl_toolkits.mplot3d import Axes3D
 
-def contour_plot(X,Y,Z,xlabel,ylabel,title):
-    contour = plt.contour(X, Y, Z, levels=40, cmap='viridis')
-    plt.colorbar(contour,label=title)
-    plt.title(title)
-    plt.xlabel(xlabel)
-    plt.ylabel(ylabel)
-    plt.show()
-
-def ddd_plot(X,Y,Z,xlabel,ylabel,zlabel,title):
-    fig = plt.figure(figsize=(10,7))
-    ax = fig.add_subplot(111,projection='3d')
-    surf = ax.plot_surface(X,Y,Z,cmap='viridis', edgecolor='none')
-    ax.set_title(title)
-    ax.set_xlabel(xlabel)
-    ax.set_ylabel(ylabel)
-    ax.set_zlabel(zlabel)
-    fig.colorbar(surf, ax=ax, shrink=0.5, aspect=10)
-
-    plt.show()    
+from plotting import scatter_plot, contour_plot, ddd_plot, line_plot
 
 true_b = 1
 true_w = 2
@@ -132,43 +114,15 @@ print("All errors using 80 matrices of shape(101,101)::", all_errors.shape)
 all_losses = (all_errors ** 2).mean(axis=0)
 print("All losses of shape", all_losses.shape)
 
-# contour_plot(bs,ws,all_losses,"bs","ws","Loss Surface")
-
-ddd_plot(bs,ws,all_losses,"bs","ws","Losses","Loss Surface")
 
 
+# for the absolute majority of problems, computing the loss surface is not going to be feasible: we have to rely on gradient descent’s ability to reach a point of minimum, even if it starts at some random point
 
 
-
-def plot_data(x_val, true_w, true_b, title):
-
-    x_val_x, x_val_y = x_val
-
-    plt.figure(figsize=(8, 6))
-
-    # Scatter plot for validation data
-    plt.scatter(x_val_x, x_val_y, color='blue', label=title)
-
-    # Plot the true line y = true_b + true_w * x
-    x_line = np.linspace(0, 1, 100).reshape(-1, 1)
-    y_line = true_b + true_w * x_line
-    plt.plot(x_line, y_line, 'k--', label=f'True line (y = {true_b} + {true_w}x)')
-
-    # Labels and legend
-    plt.xlabel('x')
-    plt.ylabel('y')
-    plt.title(title)
-    plt.legend()
-    plt.grid(True)
-    plt.tight_layout()
-    plt.show()
-
-
-# plot_data(x_val, true_w, true_b, 'Validation Data')
-# plot_data(x_train, true_w, true_b, 'Training Data')
-
-# # we are doing this to get a first pass at how different our results are from the scatter plot, cuz we are using random variables.
-# plot_data(x_train, b, w, "Forward Pass (b, w)")
+# Lets now compute the gradients.
+b_gradient = 2 * error.mean()
+w_gradient = 2 * (x_train * error).mean()
+print("Gradient for b and w:",b_gradient,w_gradient)
 
 
 
@@ -180,3 +134,24 @@ def plot_data(x_val, true_w, true_b, title):
 # • Anything else (n) in between 1 and N characterizes a mini-
 # batch gradient descent;
 
+print("===========")
+print("Learning Rate - eta")
+lr = 0.1
+print(b,w)
+b = b - lr * b_gradient
+w = w - lr * w_gradient
+print(b,w)
+
+
+
+
+
+
+
+#--------------PLOTTING-------------#
+# line_plot(b,w,[-b_gradient,-w_gradient],"b","w","Gradient")
+# scatter_plot(x_train, b, w, "Forward Pass (b, w)")
+# scatter_plot(x_val, true_w, true_b, 'Validation Data')
+# scatter_plot(x_train, true_w, true_b, 'Training Data')
+# contour_plot(bs,ws,"bs","ws","Loss Surface")
+# ddd_plot(bs,ws,all_losses,"bs","ws","Losses","Loss Surface")

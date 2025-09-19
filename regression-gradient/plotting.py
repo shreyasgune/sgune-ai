@@ -1,4 +1,5 @@
 import matplotlib.pyplot as plt
+import numpy as np
 
 def contour_plot(X,Y,xlabel,ylabel,title):
     contour = plt.contour(X, Y, levels=50, cmap='viridis')
@@ -7,6 +8,25 @@ def contour_plot(X,Y,xlabel,ylabel,title):
     plt.xlabel(xlabel)
     plt.ylabel(ylabel)
     plt.show()
+
+def plotter(y_line,scats,N,x_label,y_label,title):
+    x_line = np.linspace(0,1,N).reshape(-1,1)
+    plt.figure(figsize=(8,6))
+    val_x, val_y = scats
+    plt.scatter(val_x,val_y, color='blue', label=title)
+    plt.plot(x_line, y_line, 'k--', label=title)
+
+    # Labels and legend
+    plt.xlabel(x_label)
+    plt.ylabel(y_label)
+    plt.title(title)
+    plt.legend()
+    plt.grid(True)
+    plt.tight_layout()
+    plt.show()
+
+
+
 
 def ddd_plot(X,Y,Z,xlabel,ylabel,zlabel,title):
     fig = plt.figure(figsize=(10,7))

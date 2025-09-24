@@ -58,33 +58,43 @@ class VectorDB:
     
     def save(self) -> None:
         if self.index is not None:
-            faiss.write_index(self.index, str(self.index_path / 'index.faiss'))
+            try:
+                faiss.write_index(self.index, str(self.index_path / 'index.faiss'))
 
-            documents_data = [
-                { 
-                    'text': doc.text,
-                    'metadata': doc.metadata
-                }
-                for doc in self.documents #helps store stuff in that dictionary we created in __init__
-            ]
-            with open(self.index_path / 'douments.json', 'w') as f:
-                json.dump(documents_data, f)
+                documents_data = [
+                    { 
+                        'text': doc.text,
+                        'metadata': doc.metadata
+                    }
+                    for doc in self.documents
+                ]
+                with open(self.index_path / 'documents.json', 'w') as f:
+                    json.dump(documents_data, f)
+            except Exception as e:
+                print(f"Error saving vector database: {e}")
+                raise
 
     def load(self) -> None:
         index_file = self.index_path / 'index.faiss'
         documents_file = self.index_path / 'documents.json'
 
-        if index_file.exists() and documents_file.exists():
+        if not index_file.exists() or not documents_file.exists():
+            raise FileNotFoundError(f"Vector database files not found at {self.index_path}")
+
+        try:
             self.index = faiss.read_index(str(index_file))
             self.dimension = self.index.d
 
             with open(documents_file) as f:
                 documents_data = json.load(f)
 
-            self.documents =  [
+            self.documents = [
                 Document(
                     text=doc['text'],
                     metadata=doc['metadata']
                 )
                 for doc in documents_data                
             ]
+        except Exception as e:
+            print(f"Error loading vector database: {e}")
+            raise

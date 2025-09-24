@@ -1,0 +1,8 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: rag-project-config
+data:
+  DATABASE_URL: "your_database_url_here"
+  VECTOR_DB_URL: "your_vector_database_url_here"
+  OTHER_CONFIG_KEY: "your_other_config_value_here"

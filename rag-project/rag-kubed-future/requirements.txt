@@ -1,0 +1,11 @@
+fastapi
+uvicorn
+faiss-cpu
+sentence-transformers
+pydantic
+numpy
+scipy
+docker
+python-dotenv
+pytest
+```

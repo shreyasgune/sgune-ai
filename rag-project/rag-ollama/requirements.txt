@@ -6,4 +6,7 @@ ollama
 langchain
 torch
 gradio
+python-dotenv 
+pathlib 
+dataclasses
 # faiss-gpu

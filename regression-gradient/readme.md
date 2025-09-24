@@ -38,6 +38,21 @@ For our example, lets use b = 1 and w = 2.
 Gaussian noise added using `randn()` 
 
 
+- Generated synthetic data from a linear model (y = b + w*x + noise).
+
+- Split the data into training and validation sets.
+
+- Initialized random b and w.
+
+- Calculated predictions and MSE loss.
+
+- Created a grid of possible b and w values.
+
+- Computed the full MSE loss surface across that grid using training data.
+
+- Calculated gradients at the current point (b, w).
+
+
 Initial Loss:
 ```
 Initial loss: 2.7422
@@ -69,4 +84,6 @@ Mesh Grid Matrix:
   
 ![](regression-gradient\images\validation.png)
 
+
+##
 

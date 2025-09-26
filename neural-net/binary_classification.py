@@ -2,9 +2,11 @@
 import torch
 import torch.nn as nn
 import torch.optim as optim
+import matplotlib.pyplot as plt
+import numpy as np
 
 # lets generate random data
-X = torch.rand(1000,2) # 1000 samples, 2 random numbers between 0 and 1, per entry
+X = torch.rand(100,2) # 1000 samples, 2 random numbers between 0 and 1, per entry
 # this is going to be our Tensor (multi dimensional array) which represents data and features IRL.
 print(f"x is {X.shape}")
 
@@ -56,10 +58,74 @@ optimizer = optim.Adam(
     lr=0.01
 )
 # Adam is just a popular optimizer that mods the learning rate during training phase.
-# model.parameters is just giving the weights and biases to the optimizer, and lr defines how BIG of a step we're taking during each epoch
+# model.parameters is just giving the weights and biases to the optimizer, and lr defines how BIG of a 
+#step we're taking during each epoch
 
 
-def runIT(sample, runs, X, optimizer, criterion, model):
+## Some viz stuff
+# Remember:
+## Red regions = model predicts class 1 (sum of x+y > 1)
+## Blue regions = class 0 (sum ≤ 1)
+# 🔵 Blue background	Model thinks: class 0 (low probability)
+# 🔴 Red background	Model thinks: class 1 (high probability)
+# ⚫ Dashed black line	The true boundary: x + y = 1
+# 🔴 Red points	Actual data with label 1
+# 🔵 Blue points	Actual data with label 0
+# 🎨 Colorbar	Probability values (0 to 1)
+def plot_decision_boundary(model, X, y, sample=None):
+    x_min, x_max = 0, 1
+    y_min, y_max = 0, 1
+    xx, yy = np.meshgrid(np.linspace(x_min, x_max, 200),
+                         np.linspace(y_min, y_max, 200))
+
+    grid = torch.tensor(np.c_[xx.ravel(), yy.ravel()], dtype=torch.float32)
+
+    with torch.no_grad():
+        preds = model(grid).reshape(xx.shape).numpy()
+
+    plt.figure(figsize=(8, 6))
+    contour = plt.contourf(xx, yy, preds, levels=50, cmap="RdBu", alpha=0.6)
+    plt.colorbar(contour, label="Model's Probability of Class 1")
+
+    # Plot ground truth boundary: x + y = 1
+    x_line = np.linspace(0, 1, 100)
+    y_line = 1 - x_line
+    plt.plot(x_line, y_line, 'k--', label="Ground Truth Boundary (x + y = 1)")
+
+    # Plot training data
+    X_np = X.numpy()
+    y_np = y.numpy().ravel()
+    plt.scatter(X_np[y_np == 0][:, 0], X_np[y_np == 0][:, 1],
+                color='blue', edgecolor='k', s=30, label='Class 0')
+    plt.scatter(X_np[y_np == 1][:, 0], X_np[y_np == 1][:, 1],
+                color='red', edgecolor='k', s=30, label='Class 1')
+
+    # Highlight the sample input
+    if sample is not None:
+        sample_np = sample.numpy()
+        pred = model(sample).item()
+        plt.scatter(sample_np[0, 0], sample_np[0, 1],
+                    color='limegreen', edgecolor='black', s=150,
+                    label=f'Sample (Pred: {pred:.2f})', zorder=5)
+
+        #sample coordinates
+        plt.annotate(f"({sample_np[0,0]:.2f}, {sample_np[0,1]:.2f})",
+                     (sample_np[0, 0] + 0.02, sample_np[0, 1] + 0.02),
+                     color='green', fontsize=10)
+
+    plt.title("Decision Boundary with Training Data and Sample")
+    plt.xlabel("Feature 1")
+    plt.ylabel("Feature 2")
+    plt.xlim(0, 1)
+    plt.ylim(0, 1)
+    plt.legend(loc="upper right")
+    plt.grid(True)
+    plt.tight_layout()
+    plt.show()
+
+
+
+def runIT(sample, runs, X, y, optimizer, criterion, model):
     finalLoss = 0
     # Lets train
     for epoch in range(runs):
@@ -76,8 +142,14 @@ def runIT(sample, runs, X, optimizer, criterion, model):
         #         optimizer: DONE
         #     """
         # )
-        print(f"Epoch: {epoch+1}, Loss:{loss.item():.4f}")
+        # print(f"Epoch: {epoch+1}, Loss:{loss.item():.4f}")
         finalLoss = loss.item()
+    print("\nModel Weights and Biases:")
+    print("fc1 weights:\n", model.fc1.weight.data)
+    print("fc1 biases:\n", model.fc1.bias.data)
+    print("fc2 weights:\n", model.fc2.weight.data)
+    print("fc2 biases:\n", model.fc2.bias.data)
+
     with torch.no_grad():
         prediction = model(sample)
         print(f"OG: {sample}, Prediction: {prediction.item()} \nwhich means, I'm {prediction.item()*100} % confident")
@@ -86,15 +158,16 @@ def runIT(sample, runs, X, optimizer, criterion, model):
 
 
     print(f"Final Loss after {runs} runs is {finalLoss:.4f}")
+    plot_decision_boundary(model,X,y, sample)
 
 # Testing time
 sample1 = torch.tensor([[0.4, 0.3]]) # this adds up to 0.7, which is < 1, so we expect output prediction of 0
 
-runIT(sample1, 100, X, optimizer, criterion, model)
+runIT(sample1, 1000, X, y, optimizer, criterion, model)
 
 sample2 = torch.tensor([[0.5, 0.6]]) # this adds up to 1.1, which is > 1, so we expect output prediction of 1
 
-runIT(sample2, 100, X, optimizer, criterion, model)
+runIT(sample2, 1000, X, y, optimizer, criterion, model)
 
 
 

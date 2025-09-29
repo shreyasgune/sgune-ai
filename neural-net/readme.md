@@ -19,6 +19,70 @@ The neural network is designed to learn a decision boundary that separates point
   - Label 1: if x + y > 1
   - Label 0: if x + y ≤ 1
 
+
+### Testing
+```
+x is torch.Size([100, 2])
+y is torch.Size([100, 1])
+Model object created: sguneNN(
+  (fc1): Linear(in_features=2, out_features=4, bias=True)
+  (relu): ReLU()
+  (fc2): Linear(in_features=4, out_features=1, bias=True)
+  (sigmoid): Sigmoid()
+)
+
+
+```
+
+- Sample 1: tensor([[0.4000, 0.3000]]) (Expected class 0)
+```
+Model Weights and Biases:
+fc1 weights:
+ tensor([[-2.6212, -2.7453],
+        [ 3.0169,  3.1058],
+        [ 4.1477,  4.0912],
+        [ 2.4836,  3.4476]])
+fc1 biases:
+ tensor([ 3.3463, -2.4251, -3.4228, -2.4085])
+fc2 weights:
+ tensor([[-3.6086,  3.3511,  3.4046,  3.2942]])
+fc2 biases:
+ tensor([-1.7466])
+
+OG: tensor([[0.4000, 0.3000]]), Prediction: 0.0008524731965735555
+which means, I'm 0.08524731965735555 % confident
+Sample Sum of tensor([[0.4000, 0.3000]]) is : tensor([0.7000]) and based on that, it feels like its 0
+Final Loss after 1000 runs is 0.0170
+```
+![](./images/loss_sample_1.png)
+![](./images/sample_1_decision_boundary.png)
+
+
+- Sample 2: tensor([[0.5000, 0.6000]]) (Expected class 1)
+```
+Model Weights and Biases:
+fc1 weights:
+ tensor([[-3.3142, -3.3936],
+        [ 3.9781,  4.1895],
+        [ 5.5531,  5.3730],
+        [ 3.2896,  4.1986]])
+fc1 biases:
+ tensor([ 4.0301, -3.5039, -4.8171, -3.2100])
+fc2 weights:
+ tensor([[-4.3691,  4.6018,  4.5592,  4.1858]])
+fc2 biases:
+ tensor([-2.0048])
+OG: tensor([[0.5000, 0.6000]]), Prediction: 0.9999727010726929
+which means, I'm 99.99727010726929 % confident
+Sample Sum of tensor([[0.5000, 0.6000]]) is : tensor([1.1000]) and based on that, it feels like its 1
+Final Loss after 1000 runs is 0.0085
+```
+![](./images/loss_sample_2.png)
+![](./images/sample_2_decision_boundary.png)
+
+
+# Reference Notes Area
+
 ### Neural Network Architecture
 
 The network (`sguneNN`) consists of:

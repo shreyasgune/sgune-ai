@@ -123,10 +123,24 @@ def plot_decision_boundary(model, X, y, sample=None):
     plt.tight_layout()
     plt.show()
 
+#Looking at this graph, we can see at what iteration, is our model likely to converge
+def plotLoss(runs,loss):
+    # create x-axis data for runs
+    iterations = np.arange(1,runs+1)
+
+    if len(iterations) != len(loss):
+        print(f"Error: Iterations ({len(iterations)}) does not match length {len(loss)}")
+        return
+    
+    plt.plot(iterations, loss)
+    plt.title("Loss Plot")
+    plt.xlabel("Iterations")
+    plt.ylabel("Loss")
+    plt.show()
 
 
 def runIT(sample, runs, X, y, optimizer, criterion, model):
-    finalLoss = 0
+    finalLoss = []
     # Lets train
     for epoch in range(runs):
         optimizer.zero_grad() #clear the gradients from the previous pass. We don't want previous runs to affect our current run
@@ -143,12 +157,14 @@ def runIT(sample, runs, X, y, optimizer, criterion, model):
         #     """
         # )
         # print(f"Epoch: {epoch+1}, Loss:{loss.item():.4f}")
-        finalLoss = loss.item()
+        finalLoss.append(loss.item())
     print("\nModel Weights and Biases:")
     print("fc1 weights:\n", model.fc1.weight.data)
     print("fc1 biases:\n", model.fc1.bias.data)
     print("fc2 weights:\n", model.fc2.weight.data)
     print("fc2 biases:\n", model.fc2.bias.data)
+    # print(f"Losses:",finalLoss)
+    plotLoss(runs,finalLoss)
 
     with torch.no_grad():
         prediction = model(sample)
@@ -157,7 +173,7 @@ def runIT(sample, runs, X, y, optimizer, criterion, model):
         print(f"Sample Sum of {sample} is : {sample[:,0]+sample[:,1]} and based on that, it feels like its {predicted_class}")
 
 
-    print(f"Final Loss after {runs} runs is {finalLoss:.4f}")
+    print(f"Final Loss after {runs} runs is {finalLoss[len(finalLoss)-1]:.4f}")
     plot_decision_boundary(model,X,y, sample)
 
 # Testing time

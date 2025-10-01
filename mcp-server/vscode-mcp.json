@@ -1,0 +1,12 @@
+{
+	"servers": {
+		"music-ml-genre-server": {
+			"command": "C:\\Users\\sgune\\sgune-dev\\sgune-ai\\mcp-server\\venv\\Scripts\\python.exe",
+			"args": [
+				"C:\\Users\\sgune\\sgune-dev\\sgune-ai\\mcp-server\\mcp-music.py"
+			],
+			"type": "stdio"
+		}
+	},
+	"inputs": []
+}

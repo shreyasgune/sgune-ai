@@ -9,6 +9,11 @@ My experiments in AI
 ![](./neural-net/images/loss_sample_1.png)
 ![](./neural-net/images/sample_1_decision_boundary.png)
 
+## [MCP Server](./mcp-server/)
+![](./mcp-server/images/mcp1.PNG)
+![](./mcp-server/images/mcp2.PNG)
+![](./mcp-server/images/mcp3.PNG)
+
 ## [fastAPI](./fastapi/)
 ```
 uvicorn fastAPI:app --reload
@@ -59,9 +64,8 @@ RESPONSE HEADERS:
 
 
 ## [Retrieval Augmented Genration (RAG)](./rag-project/)
-  ## System Architecture
+  ### System Architecture
 
-  ### Data Flow Diagram
   ```mermaid
   graph TB
       subgraph Input

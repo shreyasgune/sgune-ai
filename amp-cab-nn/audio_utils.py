@@ -1,19 +1,21 @@
 import torch
-import torchaudio
+import librosa
+import numpy as np
 import torchaudio.functional as F
+from tqdm import tqdm
 
-## Load WAV
+## Load WAV using librosa (avoids torchaudio backend issues)
 def load_wav(path):
-    x, sr = torchaudio.load(path)
-    x = x.mean(dim=0)
-    x = x / x.abs().max()
-    return x, sr 
+    x, sr = librosa.load(path, sr=None, mono=True)
+    x = torch.from_numpy(x).float()
+    x = x / (x.abs().max() + 1e-8)
+    return x, sr
 
-## Load IR
+## Load IR using librosa
 def load_ir(path):
-    ir, _ = torchaudio.load(path)
-    ir  = ir.mean(dim=0)
-    ir = ir / ir.abs().max()
+    ir, sr = librosa.load(path, sr=None, mono=True)
+    ir = torch.from_numpy(ir).float()
+    ir = ir / (ir.abs().max() + 1e-8)
     return ir
 
 ## Oversample
@@ -27,7 +29,7 @@ def downsample(x, factor):
 ## Windowing (for CNN input)
 def make_window(x, y, window):
     X, Y = [], []
-    for i in range(window, len(x)):
+    for i in tqdm(range(window, len(x)), desc="Creating training windows"):
         X.append(x[i - window:i])
         Y.append(y[i])
     return torch.stack(X), torch.tensor(Y)

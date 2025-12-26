@@ -22,6 +22,8 @@ print()
 WINDOW = 256
 OVERSAMPLE = 8
 EPOCHS = 100
+BATCH_SIZE = 256
+LEARN_RATE = 5e-5
 
 #Load Audio
 print("Loading audio files...")
@@ -57,7 +59,7 @@ Y = Y.unsqueeze(1)
 print(f"Training data prepared: {X.shape} samples\n")
 
 # DAS TRAIN
-model = train_model(X, Y, DEVICE, epochs=EPOCHS, window=WINDOW)
+model = train_model(X, Y, DEVICE, epochs=EPOCHS, batch_size=BATCH_SIZE, learn_rate=LEARN_RATE, window=WINDOW)
 print("Generating transfer curve...")
 plot_transfer_curve(model, WINDOW, DEVICE)
 print("Transfer curve complete!\n")
@@ -81,3 +83,33 @@ print("Visualizing output...")
 plot_waveform(output, sr, "Modeled Output")
 plot_spectrum(output, sr, "Modeled Output Spectrum")
 print("\nAll done!")
+
+# Save parameters to log file
+log_filename = f"passes/pass_{datetime.now().strftime('%Y%m%d_%H%M%S')}.txt"
+os.makedirs("passes", exist_ok=True)
+with open(log_filename, "w") as f:
+    f.write("=" * 60 + "\n")
+    f.write("TRAINING PARAMETERS\n")
+    f.write("=" * 60 + "\n")
+    for key, val in PARAMS.items():
+        f.write(f"{key:.<40} {val}\n")
+    f.write("=" * 60 + "\n")
+    f.write(f"\nOutput file: modeled_amp_with_cab.wav\n")
+    f.write(f"Log timestamp: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}\n")
+
+print(f"\nParameters saved to: {log_filename}")
+
+# Save parameters to log file
+log_filename = f"passes/pass_{datetime.now().strftime('%Y%m%d_%H%M%S')}.txt"
+os.makedirs("passes", exist_ok=True)
+with open(log_filename, "w") as f:
+    f.write("=" * 60 + "\n")
+    f.write("TRAINING PARAMETERS\n")
+    f.write("=" * 60 + "\n")
+    for key, val in PARAMS.items():
+        f.write(f"{key:.<40} {val}\n")
+    f.write("=" * 60 + "\n")
+    f.write(f"\nOutput file: modeled_amp_with_cab.wav\n")
+    f.write(f"Log timestamp: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}\n")
+
+print(f"\nParameters saved to: {log_filename}")

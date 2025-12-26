@@ -9,7 +9,7 @@ from torch.nn import MSELoss
 if torch.cuda.is_available():
     torch.backends.cudnn.benchmark = True
 
-def train_model(X, Y, device, epochs, batch_size=256, learn_rate=1e-4, window=256):
+def train_model(X, Y, device, epochs, batch_size=256, learn_rate=5e-5, window=256):
     model = GuneAmp().to(device)
     optimizer = Adam(model.parameters(), lr=learn_rate)
     mse = MSELoss()
@@ -26,11 +26,20 @@ def train_model(X, Y, device, epochs, batch_size=256, learn_rate=1e-4, window=25
             optimizer.zero_grad()
             yp = model(xb)
 
+            # Reconstruction loss
             loss = mse(yp, yb)
-            loss += 0.5 * mse(
+            
+            # Pre-emphasis loss (weight 2.0 for maximum distortion harmonics)
+            loss += 2.0 * mse(
                 pre_emphasis(yp.squeeze()),
                 pre_emphasis(yb.squeeze())
             )
+            
+            # Harmonic distortion loss: encourage outputs to follow saturation curves
+            # This penalizes outputs that are too linear and encourages non-linear behavior
+            yp_sq = yp ** 2
+            yb_sq = yb ** 2
+            loss += 0.3 * mse(yp_sq, yb_sq)
 
             loss.backward()
             optimizer.step()

@@ -21,17 +21,21 @@ print()
 # DAS SETTINGS
 WINDOW = 256
 OVERSAMPLE = 8
-EPOCHS = 50
+EPOCHS = 100
 
 #Load Audio
 print("Loading audio files...")
-clean, sr = load_wav("untitled.wav")
+clean, sr = load_wav("sgune-wav.wav")
 amp, _ = load_wav("amp.wav")
 cab_ir = load_ir("cab_ir.wav")
 print("Audio files loaded!\n")
 
 clean *= 0.5
 amp *= 0.5
+
+print(clean.max())
+print(amp.max())
+
 print("Visualizing input audio...")
 plot_waveform(clean, sr, "CLEAN DI")
 plot_waveform(amp, sr, "Amp Output")

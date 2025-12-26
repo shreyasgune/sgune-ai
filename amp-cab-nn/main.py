@@ -2,10 +2,11 @@ import torch
 from audio_utils import load_wav, load_ir, oversample, make_window
 from train import train_model
 from infer import run_inference
+from torchcodec.decoders import AudioDecoder
 from viz import plot_waveform, plot_spectrum, plot_ir, plot_transfer_curve
 
 # Gotta use GPU if available 
-DEVICE = "cuda" if torch.cude.is_available() else "mps" if torch.backends.mps.is_available() else "cpu"
+DEVICE = "cuda" if torch.cuda.is_available() else "mps" if torch.backends.mps.is_available() else "cpu"
 print("USING DEVICE: ", DEVICE)
 
 # DAS SETTINGS

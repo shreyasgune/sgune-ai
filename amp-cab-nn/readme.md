@@ -31,7 +31,7 @@ This project aims to **digitally model analog guitar amplifier circuitry and spe
 ## Graphs and How to read this stuff
 
 ### Clean DI Waveform
-![](graphs\waveform_clean_di.png)
+![](graphs/waveform_clean_di.png)
 This plot shows the raw guitar signal recorded directly from the instrument, without amplification or effects.
 The waveform has a relatively simple shape and lower overall energy, which reflects the lack of distortion and compression.
 When reading similar plots, cleaner signals typically appear more sparse and less “dense” over time.
@@ -39,7 +39,7 @@ When reading similar plots, cleaner signals typically appear more sparse and les
 What this implies: This is the baseline signal the model must transform.
 
 ### Amp Output Waveform
-![](graphs\waveform_amp_output.png)
+![](graphs/waveform_amp_output.png)
 This waveform shows the real amplifier’s output in the time domain.
 The signal appears denser and more compressed, indicating nonlinear distortion and dynamic leveling caused by the amp circuitry.
 In general, increased waveform density and irregular shapes suggest saturation and harmonic generation.
@@ -47,7 +47,7 @@ In general, increased waveform density and irregular shapes suggest saturation a
 What this implies: The target sound contains strong nonlinear behavior.
 
 ### Modeled Output Waveform
-![](graphs\waveform_modeled_output.png)
+![](graphs/waveform_modeled_output.png)
 This waveform represents the neural network’s processed output.
 Its visual similarity to the real amp waveform indicates that the model has learned to reproduce distortion and compression.
 When evaluating your own models, mismatched waveform density can indicate underfitting or incorrect normalization.
@@ -55,7 +55,7 @@ When evaluating your own models, mismatched waveform density can indicate underf
 What this implies: The model is producing realistic time-domain behavior.
 
 ### Clean Spectrum
-![](graphs\spectrum_clean_spectrum.png)
+![](graphs/spectrum_clean_spectrum.png)
 This spectrum shows how the clean DI signal’s energy is distributed across frequencies.
 Notice the broader frequency range and stronger high-frequency content, which is typical of direct guitar recordings.
 When reading spectra, taller peaks indicate stronger frequencies, and wide bandwidth indicates less filtering.
@@ -63,7 +63,7 @@ When reading spectra, taller peaks indicate stronger frequencies, and wide bandw
 What this implies: The input signal contains more raw information than a finished guitar tone.
 
 ### Amp Spectrum
-![](graphs\spectrum_amp_spectrum.png)
+![](graphs/spectrum_amp_spectrum.png)
 This plot shows the frequency content of the real amplified signal.
 Energy is concentrated in the low and mid frequencies, with reduced high frequencies due to distortion and speaker interaction.
 In guitar tones, a mid-focused spectrum is a strong indicator of a realistic amp sound.
@@ -71,7 +71,7 @@ In guitar tones, a mid-focused spectrum is a strong indicator of a realistic amp
 What this implies: The amp shapes the tone, not just the loudness.
 
 ### Cabinet IR
-![](graphs\ir_cabinet_ir.png)
+![](graphs/ir_cabinet_ir.png)
 
 This plot represents the cabinet impulse response, showing how the cabinet reacts to a very short input signal.
 A sharp initial spike followed by a fast decay is characteristic of real speaker cabinets.
@@ -80,7 +80,7 @@ When reading IRs, long ringing or oscillations usually indicate unrealistic or p
 What this implies: The cabinet behaves like a real physical system.
 
 ### Cabinet IR Spectrum
-![](graphs\spectrum_cabinet_ir_spectrum.png)
+![](graphs/spectrum_cabinet_ir_spectrum.png)
 This spectrum shows how the cabinet filters different frequencies.
 High frequencies are strongly attenuated, which explains why guitar cabinets sound warm and not harsh.
 In general, steep high-frequency roll-off is expected for guitar speaker cabinets.
@@ -88,7 +88,7 @@ In general, steep high-frequency roll-off is expected for guitar speaker cabinet
 What this implies: The cabinet plays a critical role in shaping the final tone.
 
 ### Modeled Output Spectrum
-![](graphs\spectrum_modeled_output_spectrum.png)
+![](graphs/spectrum_modeled_output_spectrum.png)
 This plot shows the frequency content of the model’s final output after amp modeling and cabinet filtering.
 A close match to the real amp spectrum indicates that the model has learned both nonlinear distortion and frequency shaping.
 When evaluating models, spectral mismatches often point to missing cabinet modeling or insufficient training data.
@@ -96,7 +96,7 @@ When evaluating models, spectral mismatches often point to missing cabinet model
 What this implies: The model produces perceptually realistic tonal balance.
 
 ### Learned Transfer Curve
-![](graphs\transfer_curve.png)
+![](graphs/transfer_curve.png)
 This curve shows how the model maps input signal levels to output levels.
 The curved, non-linear shape indicates saturation, which is essential for distortion.
 In general, straight lines imply linear systems, while curves imply nonlinear behavior.

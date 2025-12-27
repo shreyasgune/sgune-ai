@@ -1,6 +1,8 @@
 # Guitar Amplifier & Cabinet Neural Network Model
 
 A deep learning project that uses a convolutional neural network to model the non-linear behavior of guitar amplifiers and simulate speaker cabinet impulse responses. The trained model can process clean guitar audio and produce a realistic amplified output with cabinet coloration.
+
+Listen to the stuff here: https://soundcloud.com/lewmos/sets/guneamp-neural-network-test-set 
 ---
 
 ## Overview

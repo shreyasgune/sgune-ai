@@ -5,6 +5,8 @@ from train import train_model
 from infer import run_inference
 # from torchcodec.decoders import AudioDecoder
 from viz import plot_waveform, plot_spectrum, plot_ir, plot_transfer_curve
+import os
+from datetime import datetime
 
 # Gotta use GPU if available 
 DEVICE = "cuda" if torch.cuda.is_available() else "mps" if torch.backends.mps.is_available() else "cpu"
@@ -20,52 +22,47 @@ print()
 
 # DAS SETTINGS
 WINDOW = 256
-OVERSAMPLE = 8
-EPOCHS = 100
+OVERSAMPLE = 1
+EPOCHS = 10
 BATCH_SIZE = 256
-LEARN_RATE = 5e-5
+LEARN_RATE = 2e-5
 
 #Load Audio
 print("Loading audio files...")
-clean, sr = load_wav("sgune-wav.wav")
+clean, sr = load_wav("untitled.wav")
 amp, _ = load_wav("amp.wav")
 cab_ir = load_ir("cab_ir.wav")
 print("Audio files loaded!\n")
 
-clean *= 0.5
-amp *= 0.5
+clean *= 0.9
+amp *= 0.9
 
 print(clean.max())
 print(amp.max())
 
-print("Visualizing input audio...")
-plot_waveform(clean, sr, "CLEAN DI")
-plot_waveform(amp, sr, "Amp Output")
-plot_spectrum(clean, sr, "Clean Spectrum")
-plot_spectrum(amp, sr, "Amp Spectrum")
-plot_ir(cab_ir, sr, "Cabinet IR")
-plot_spectrum(cab_ir, sr, "Cabinet IR Spectrum")
-print("Input visualizations complete!\n")
 
-#Oversample
-print("Oversampling audio...")
-clean_os = oversample(clean, OVERSAMPLE)
-amp_os = oversample(amp, OVERSAMPLE)
-print("Oversampling complete!\n")
+#Oversample (for future anti-aliasing stuff)
+# print("Oversampling audio...")
+# clean_os = oversample(clean, OVERSAMPLE)
+# amp_os = oversample(amp, OVERSAMPLE)
+# print("Oversampling complete!\n")
+
+clean_os = clean 
+amp_os = amp
 print("Preparing training data...")
 X, Y = make_window(clean_os, amp_os, WINDOW)
 X = X.unsqueeze(1)
-Y = Y.unsqueeze(1)
+Y = Y.unsqueeze(1).unsqueeze(2)
 print(f"Training data prepared: {X.shape} samples\n")
 
 # DAS TRAIN
-model = train_model(X, Y, DEVICE, epochs=EPOCHS, batch_size=BATCH_SIZE, learn_rate=LEARN_RATE, window=WINDOW)
-print("Generating transfer curve...")
-plot_transfer_curve(model, WINDOW, DEVICE)
-print("Transfer curve complete!\n")
+model = train_model(X, Y, DEVICE, epochs=EPOCHS, batch_size=BATCH_SIZE, learn_rate=LEARN_RATE, window=WINDOW, checkpoint_path="checkpoints/gune_amp.pt", resume=True)
+
+
 
 # Inference
 print("Running inference...")
+
 output = run_inference(
     model,
     clean_os,
@@ -78,38 +75,20 @@ output = run_inference(
 )
 print()
 
+print("Visualizing input audio...")
+plot_waveform(clean, sr, "CLEAN DI")
+plot_waveform(amp, sr, "Amp Output")
+plot_spectrum(clean, sr, "Clean Spectrum")
+plot_spectrum(amp, sr, "Amp Spectrum")
+plot_ir(cab_ir, sr, "Cabinet IR")
+plot_spectrum(cab_ir, sr, "Cabinet IR Spectrum")
+print("Generating transfer curve...")
+plot_transfer_curve(model, WINDOW, DEVICE)
+print("Transfer curve complete!\n")
+print("Input visualizations complete!\n")
+
 # Viz the output
 print("Visualizing output...")
 plot_waveform(output, sr, "Modeled Output")
 plot_spectrum(output, sr, "Modeled Output Spectrum")
 print("\nAll done!")
-
-# Save parameters to log file
-log_filename = f"passes/pass_{datetime.now().strftime('%Y%m%d_%H%M%S')}.txt"
-os.makedirs("passes", exist_ok=True)
-with open(log_filename, "w") as f:
-    f.write("=" * 60 + "\n")
-    f.write("TRAINING PARAMETERS\n")
-    f.write("=" * 60 + "\n")
-    for key, val in PARAMS.items():
-        f.write(f"{key:.<40} {val}\n")
-    f.write("=" * 60 + "\n")
-    f.write(f"\nOutput file: modeled_amp_with_cab.wav\n")
-    f.write(f"Log timestamp: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}\n")
-
-print(f"\nParameters saved to: {log_filename}")
-
-# Save parameters to log file
-log_filename = f"passes/pass_{datetime.now().strftime('%Y%m%d_%H%M%S')}.txt"
-os.makedirs("passes", exist_ok=True)
-with open(log_filename, "w") as f:
-    f.write("=" * 60 + "\n")
-    f.write("TRAINING PARAMETERS\n")
-    f.write("=" * 60 + "\n")
-    for key, val in PARAMS.items():
-        f.write(f"{key:.<40} {val}\n")
-    f.write("=" * 60 + "\n")
-    f.write(f"\nOutput file: modeled_amp_with_cab.wav\n")
-    f.write(f"Log timestamp: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}\n")
-
-print(f"\nParameters saved to: {log_filename}")

@@ -7,7 +7,19 @@ Listen to the stuff here: https://soundcloud.com/lewmos/sets/guneamp-neural-netw
 
 ## Overview
 
-This project aims to **digitally model analog guitar amplifier circuitry and speaker cabinet acoustics** using a neural network approach. Instead of trying to simulate the physical physics of vacuum tubes and speakers, we train a CNN to learn the non-linear transfer function by example, enabling real-time or near-real-time guitar amp simulation.
+This project aims to **digitally model analog guitar amplifier circuitry and speaker cabinet acoustics** using a neural network approach. Instead of trying to simulate the physics of vacuum tubes and speakers, we train a CNN to learn the non-linear transfer function by example, enabling real-time or near-real-time guitar amp simulation. Well, this particular project is not real time (yet) because I'm using a WAV file to train and then to pass through the model. But V2, I plan to make a VST and do a test in reaper.
+
+### Why CNN anyway?
+CNN (Convolutional Neural Networks) is good to learn patterns and how they repeat over time or space. We look at small windows of input audio and learn whats happening in those chunks and how it all adds up to make the whole signal. **convolution** itself is fancy way of saying 'slide a small filter across a signal and combo the results'.
+In audio, this is how speakers colour the sound, tone is shaped by Cabs, your EQs work, reverbs and impulse responses. Amps dont need the whole signal to know what sort of tone you want, they just need to know a small chunk (usually in milliseconds). Convolution is what were using to "create" this non-linearity.
+
+*a word about non-linearity*
+Output changes disproportionately to input. You do some crazy riffage, the amp saturates, waveform starts clipping, new harmonics(fancy term for frequencies) get created. This is what we mean by non-linear. The model I'm trying to train needs to operate in this non-linear way. 
+
+When you look at the chart for the *transfer curve* you will see this non-linearity in action. Another way to confirm that our model has worked (apart from it sounding harsh) is the fact that our output waveform looks all jagged and the spectrum has heaps of extra frequencies.
+
+**But how do I make my model learn this non-linearity?**
+Maths. Activation functions like ReLU, Tanh, Sigmoid allow models to bend signals, saturate outputs, and create non-linear mappings. When we stack these layers, the network learns to approximate complex non-linear functions, like the ones we find in guitar amps.
 
 ### Key Goals:
 - Train a lightweight CNN that learns amp + cab characteristics from reference audio

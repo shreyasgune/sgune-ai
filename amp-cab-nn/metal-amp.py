@@ -12,8 +12,8 @@ from tqdm import tqdm
 DEVICE = "cuda" if torch.cuda.is_available() else "cpu"
 SR = 44100
 
-WINDOW = 256                # 🔥 larger context
-PRED_SAMPLES = 32            # 🔥 multi-sample prediction
+WINDOW = 256                #  larger context
+PRED_SAMPLES = 32            #  multi-sample prediction
 BATCH_SIZE = 256
 EPOCHS = 1
 LEARNING_RATE = 1e-4
@@ -187,7 +187,7 @@ def infer(clean_wav, out_wav):
             y = model(x)
             out[i:i+PRED_SAMPLES] = y[0, 0, -PRED_SAMPLES:]
 
-    # 🔥 post-drive shaping
+    #  post-drive shaping
     out = torch.tanh(out * 3.5)
     out = out / out.abs().max()
 

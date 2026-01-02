@@ -1,6 +1,7 @@
 # A Mini LLM
 Im building a mini LLM to understand how transformers work.
 
+## General flow of operations
 ```
 User Question
    ↓
@@ -24,12 +25,24 @@ Softmax probabilities
 Next-token prediction
 ```
 
+For GPU
+> ```pip install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu118
+```
+
 ## Visualizations
+### CPU Based
 ![](images/layer_1.png)
 ![](images/layer_2.png)
 ![](images/next_token_probability_1.png)
 
-## Sample run
+### GPU Based
+
+## Sample Run GPU
+```
+
+```
+
+## Sample run CPU
 ```
 
 

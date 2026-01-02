@@ -3,13 +3,16 @@ import matplotlib.pyplot as plt
 import re
 
 np.set_printoptions(precision=3, suppress=True)
-
+# controls how numpy arrays are printed, mostly for readability
+# precision tells the decimal points
+# suppress avoids that 1e-4 scientific notation
 
 # Text processing
 
 def tokenize(text):
     text = text.lower()
     text = re.sub(r"[^a-z\s]", "", text)
+    #this removes everything except a-z and whitespace(\s)
     return text.split()
 
 
@@ -21,29 +24,39 @@ with open("corpus.txt", "r", encoding="utf-8") as f:
 tokenized_corpus = [tokenize(s) for s in corpus]
 
 vocab = sorted(set(word for s in tokenized_corpus for word in s))
+# set removes duplicates, sorted ensures deterministic order
+
 vocab = ["<unk>"] + vocab
+#adds unk for unknown tokens
 
 token_to_id = {t: i for i, t in enumerate(vocab)}
+#create a dictionary, mapping each word to an integer id
+
 id_to_token = {i: t for t, i in token_to_id.items()}
+#create a reverse map (ID to token)
+
 
 vocab_size = len(vocab)
-
+# total number of tokens in the vocabulary
 
 # Model hyperparameters
 
-d_model = 8
-num_layers = 2
-learning_rate = 0.1
-epochs = 200
+d_model = 8 #size of each token embedding
+num_layers = 2 #number of self-attention layers
+learning_rate = 0.1 #LR for gradient descent
+epochs = 200 #number of passes over corpus
 
 np.random.seed(42)
+# randomness fix so results are reproducible
 
 
 # Parameters
 
 embeddings = np.random.randn(vocab_size, d_model)
+#creates a learnable embedding vector for each word of shape (vocab_size, d_model)
 
-layers = []
+layers = [] #attention layers
+
 for _ in range(num_layers):
     layers.append({
         "W_Q": np.random.randn(d_model, d_model),
@@ -51,27 +64,40 @@ for _ in range(num_layers):
         "W_V": np.random.randn(d_model, d_model),
         "W_O": np.random.randn(d_model, d_model),
     })
+# Q(query), K(key), V(value) matrix creation
+# W_O is the output matrix
+# This mimics single-head attention layer
 
 W_out = np.random.randn(d_model, vocab_size)
-
+#final linear layer that maps model output to vocab digits
 
 # Helpers
 
 def softmax(x):
     x = x - np.max(x, axis=-1, keepdims=True)
     e = np.exp(x)
-    return e / np.sum(e, axis=-1, keepdims=True)
+    return e / np.sum(e, axis=-1, keepdims=True) #softmax forumla
+#converts raw scores into probabilties
 
 def causal_attention(X, layer):
     Q = X @ layer["W_Q"]
     K = X @ layer["W_K"]
     V = X @ layer["W_V"]
+    #projects input embeddings into queries, keys and values
 
     scores = Q @ K.T / np.sqrt(d_model)
+    #computes scaled attention scores
+
     mask = np.tril(np.ones(scores.shape))
+    #creates lower triangular masks
+
     scores[mask == 0] = -1e9
+    #to force future-token attention probabilities to zero after softmax
 
     attn = softmax(scores)
+    # convert raw scores into attention weights
+
+
     out = (attn @ V) @ layer["W_O"]
     return out, attn
 

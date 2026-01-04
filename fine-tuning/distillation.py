@@ -15,7 +15,7 @@ import matplotlib.pyplot as plt
 # CUDA CHECK
 # =====================
 DEVICE = "cuda" if torch.cuda.is_available() else "cpu"
-assert DEVICE == "cuda", "❌ CUDA not available. Check your PyTorch install."
+assert DEVICE == "cuda", " CUDA not available. Check your PyTorch install."
 
 # =====================
 # DIRECTORIES
@@ -31,12 +31,12 @@ STUDENT_MODEL = "prajjwal1/bert-tiny"     # Touring bassist
 
 MAX_LENGTH = 128
 BATCH_SIZE = 16
-EPOCHS = 10
-LR = 2e-5
+EPOCHS = 5
+LR = 1e-5
 
 TEMPERATURE = 3.0
-ALPHA = 0.7    # supervised
-BETA = 0.3     # distillation
+ALPHA = 0.8    # supervised
+BETA = 0.2     # distillation
 
 # =====================
 # LOAD LYRICS (LOCAL)
@@ -187,6 +187,14 @@ for epoch in range(EPOCHS):
             sup=f"{loss_sup.item():.3f}",
             dist=f"{loss_distill.item():.3f}"
         )
+    print(
+    f"\nEpoch {epoch+1} summary:"
+    f"\n  Avg total loss: {sum(total_losses[-len(loader):]) / len(loader):.4f}"
+    f"\n  Avg supervised loss: {sum(sup_losses[-len(loader):]) / len(loader):.4f}"
+    f"\n  Avg distillation loss: {sum(distill_losses[-len(loader):]) / len(loader):.4f}"
+    f"\n  Avg student entropy: {sum(student_entropy[-len(loader):]) / len(loader):.4f}"
+)
+
 
 # =====================
 # SAVE MODEL
@@ -197,6 +205,11 @@ tokenizer.save_pretrained("models/iron_maiden_distilled_student")
 # =====================
 # PLOTS
 # =====================
+
+def save_explanation(filename, text):
+    with open(os.path.join("graphs", filename), "w", encoding="utf-8") as f:
+        f.write(text)
+
 plt.figure()
 plt.plot(total_losses)
 plt.title("Total Training Loss")
@@ -224,6 +237,32 @@ plt.xlabel("Step")
 plt.ylabel("Entropy")
 plt.savefig("graphs/maiden_entropy.png")
 plt.close()
+
+teacher_probs = []
+student_probs = []
+
+student.eval()
+with torch.no_grad():
+    for batch in loader:
+        input_ids = batch["input_ids"].to(DEVICE)
+        attention_mask = batch["attention_mask"].to(DEVICE)
+
+        t_logits = teacher(input_ids, attention_mask).logits
+        s_logits = student(input_ids, attention_mask).logits
+
+        teacher_probs.extend(torch.softmax(t_logits, dim=-1)[:, 1].cpu())
+        student_probs.extend(torch.softmax(s_logits, dim=-1)[:, 1].cpu())
+
+plt.figure()
+plt.scatter(teacher_probs, student_probs, alpha=0.6)
+plt.plot([0, 1], [0, 1], linestyle="--")
+plt.xlabel("Teacher Maiden Probability")
+plt.ylabel("Student Maiden Probability")
+plt.title("Teacher–Student Agreement (Distillation Effect)")
+plt.savefig("graphs/maiden_teacher_student_agreement.png")
+plt.close()
+
+
 
 print("Training complete")
 print("Model saved to models/iron_maiden_distilled_student")
